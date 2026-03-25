@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江南大学 - 搜索</title>
+    <link rel="icon" href="https://cn.bing.com/sa/simg/favicon-trans-bg-blue-mg.ico" type="image/x-icon">
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #fff;
+            color: #202124;
+            min-width: 1204px;
+            line-height: 1.2;
+        }
+        
+        /* 页眉样式 */
+        #b_header {
+            padding: 22px 0 0 0;
+            background-color: #fff;
+        }
+        
+        .header-container {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .b_logo {
+            margin-right: 20px;
+        }
+        
+        .b_logo a {
+            display: block;
+        }
+        
+        .b_logo img {
+            height: 30px;
+        }
+        
+        /* 搜索表单样式 */
+        .b_searchboxForm {
+            display: inline-block;
+            flex-grow: 1;
+            max-width: 690px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.05), 0 2px 4px 1px rgba(0,0,0,.09);
+            border-radius: 24px;
+            background-color: #fff;
+            border: 1px solid transparent;
+        }
+        
+        .b_searchboxForm:hover, .b_focus .b_searchboxForm {
+            box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 2px 4px 1px rgba(0,0,0,.18);
+        }
+        
+        .sb_form {
+            display: flex;
+            align-items: center;
+            padding: 5px 5px 5px 15px;
+        }
+        
+        .b_searchbox {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            height: 34px;
+            background: transparent;
+        }
+        
+        .b_searchboxSubmit {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%230060e6" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        /* 用户功能区 */
+        .id_h {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .id_button {
+            color: #5f6368;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .id_button:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* 导航标签 */
+        .b_scopebar {
+            margin: 11px 0 0 160px;
+            border-bottom: 1px solid #dfe1e5;
+        }
+        
+        .b_scopebar ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+        }
+        
+        .b_scopebar li {
+            padding: 3px 0;
+            margin: 0 12px;
+        }
+        
+        .b_scopebar a {
+            text-decoration: none;
+            color: #5f6368;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding: 0 8px;
+            line-height: 25px;
+        }
+        
+        .b_scopebar .b_active a {
+            color: #1a0dab;
+            font-weight: bold;
+            border-bottom: 3px solid #1a0dab;
+        }
+        
+        /* 主要内容区域 */
+        #b_content {
+            padding: 20px 0 0 160px;
+            min-height: 500px;
+        }
+        
+        /* 搜索结果统计 */
+        .b_tween {
+            color: #70757a;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        /* 搜索结果列表 */
+        #b_results {
+            max-width: 652px;
+            list-style: none;
+        }
+        
+        .b_algo {
+            margin-bottom: 26px;
+        }
+        
+        .b_algo h2 {
+            font-size: 20px;
+            font-weight: normal;
+            line-height: 1.3;
+            margin-bottom: 3px;
+        }
+        
+        .b_algo h2 a {
+            color: #1a0dab;
+            text-decoration: none;
+        }
+        
+        .b_algo h2 a:hover {
+            text-decoration: underline;
+        }
+        
+        .b_caption {
+            line-height: 1.58;
+        }
+        
+        cite {
+            color: #006d21;
+            font-style: normal;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        .b_caption p {
+            color: #4d5156;
+            font-size: 14px;
+        }
+        
+        /* 右侧知识面板 */
+        #b_context {
+            position: absolute;
+            top: 180px;
+            right: 80px;
+            width: 350px;
+        }
+        
+        .b_ans {
+            border-radius: 8px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.05);
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .b_ans h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .b_entitySubTitle {
+            color: #70757a;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        
+        .b_factrow {
+            margin-bottom: 8px;
+            color: #4d5156;
+        }
+        
+        /* 页脚 */
+        .b_footer {
+            background-color: #f2f2f2;
+            padding: 12px 0;
+            margin-top: 40px;
+        }
+        
+        .b_footerItems {
+            padding: 0 160px;
+            display: flex;
+            justify-content: space-between;
+            color: #70757a;
+            font-size: 13px;
+        }
+        
+        .b_footerItems a {
+            color: #70757a;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        
+        .b_footerItems a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            body {
+                min-width: 100%;
+            }
+            
+            #b_content, .b_scopebar, .b_footerItems {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            #b_context {
+                position: relative;
+                top: auto;
+                right: auto;
+                width: 100%;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header id="b_header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="b_logo">
+                <a href="#">
+                    <img src="https://www.bing.com/sa/simg/bing_p_rr_teal_min.ico" alt="必应">
+                </a>
+            </div>
+            
+            <!-- 搜索表单 -->
+            <form class="b_searchboxForm" id="sb_form">
+                <div class="sb_form">
+                    <input class="b_searchbox" type="search" name="q" value="江南大学" aria-label="搜索">
+                    <button class="b_searchboxSubmit" type="submit" aria-label="搜索">
+                        <span class="search-icon"></span>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- 用户功能区 -->
+            <div class="id_h">
+                <a class="id_button" href="#" aria-label="设置">设置</a>
+                <a class="id_button" href="#" aria-label="菜单">菜单</a>
+                <a class="id_button" href="#" aria-label="登录">登录</a>
+            </div>
+        </div>
+        
+        <!-- 导航标签 -->
+        <nav class="b_scopebar">
+            <ul>
+                <li class="b_active"><a href="#">全部</a></li>
+                <li><a href="#">图片</a></li>
+                <li><a href="#">视频</a></li>
+                <li><a href="#">地图</a></li>
+                <li><a href="#">新闻</a></li>
+                <li><a href="#">更多</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- 主要内容区域 -->
+    <main id="b_content">
+        <!-- 搜索结果统计 -->
+        <div class="b_tween">
+            大约 20,000,000 条结果（用时 0.35 秒）
+        </div>
+        
+        <div style="display: flex;">
+            <!-- 左侧搜索结果列表 -->
+            <div style="flex: 1; max-width: 652px;">
+                <ol id="b_results">
+                    <!-- 结果1 -->
+                    <li class="b_algo">
+                        <h2><a href="https://www.jiangnan.edu.cn/">江南大学主页</a></h2>
+                        <cite>https://www.jiangnan.edu.cn</cite>
+                        <div class="b_caption">
+                            <p>江南大学是教育部直属、国家"211工程"重点建设高校和一流学科建设高校。学校坐落于江苏省无锡市，具有悠久的办学历史、厚重的文化积淀。学校涵盖理、工、医、文、法、经济、管理、教育、艺术等学科门类。</p>
+                        </div>
+                    </li>
+                    
+                    <!-- 结果2 -->
+                    <li class="b_algo">
+                        <h2><a href="https://baike.baidu.com/item/%E6%B1%9F%E5%8D%97%E5%A4%A7%E5%AD%A6">江南大学_百度百科</a></h2>
+                        <cite>https://baike.baidu.com/item/江南大学</cite>
+                        <div class="b_caption">
+                            <p>江南大学是中华人民共和国教育部直属高校，由教育部和江苏省人民政府共建，位列国家首批"211工程"、"985工程优势学科创新平台"重点建设高校，入选国家"111计划"、卓越工程师教育培养计划、卓越农林人才教育培养计划。</p>
+                        </div>
+                    </li>
+                    
+                    <!-- 结果3 -->
+                    <li class="b_algo">
+                        <h2><a href="https://www.jiangnan.edu.cn/xxgk/xxjj.htm">学校简介 - 江南大学</a></h2>
+                        <cite>https://www.jiangnan.edu.cn/xxgk/xxjj.htm</cite>
+                        <div class="b_caption">
+                            <p>江南大学源起1902年创建的三江师范学堂，历经国立中央大学、南京大学等发展时期；1958年南京工学院食品工业系整建制东迁无锡，建立无锡轻工业学院；1995年更名为无锡轻工大学；2001年无锡轻工大学、江南学院、无锡教育学院合并组建江南大学。</p>
+                        </div>
+                    </li>
+                    
+                    <!-- 结果4 -->
+                    <li class="b_algo">
+                        <h2><a href="https://zs.jiangnan.edu.cn/">招生就业 - 江南大学</a></h2>
+                        <cite>https://zs.jiangnan.edu.cn</cite>
+                        <div class="b_caption">
+                            <p>江南大学本科招生网提供学校概况、招生章程、招生计划、历年分数、专业介绍、校园生活、就业情况等全方位招生信息，为考生和家长提供报考咨询服务。</p>
+                        </div>
+                    </li>
+                    
+                    <!-- 结果5 -->
+                    <li class="b_algo">
+                        <h2><a href="https://www.jiangnan.edu.cn/yxsz.htm">院系设置 - 江南大学</a></h2>
+                        <cite>https://www.jiangnan.edu.cn/yxsz.htm</cite>
+                        <div class="b_caption">
+                            <p>学校设有18个学院（部），包括生物工程学院、食品学院、设计学院、商学院、物联网工程学院、机械工程学院、环境与土木工程学院、理学院、人文学院、法学院、马克思主义学院等，涵盖9大学科门类。</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+            
+            <!-- 右侧知识面板 -->
+            <aside id="b_context">
+                <div class="b_ans">
+                    <h2>江南大学</h2>
+                    <div class="b_entitySubTitle">Jiangnan University</div>
+                    <div class="b_factrow">
+                        <strong>创办时间</strong>: 1902年
+                    </div>
+                    <div class="b_factrow">
+                        <strong>学校类型</strong>: 公立大学
+                    </div>
+                    <div class="b_factrow">
+                        <strong>主管部门</strong>: 中华人民共和国教育部
+                    </div>
+                    <div class="b_factrow">
+                        <strong>所属地区</strong>: 中国江苏无锡
+                    </div>
+                    <div class="b_factrow">
+                        <strong>知名校友</strong>: 季克良、王骏等
+                    </div>
+                    <div class="b_factrow">
+                        <strong>主要院系</strong>: 生物工程学院、食品学院、设计学院、商学院等
+                    </div>
+                    <div class="b_factrow">
+                        <strong>属性</strong>: 211工程、985工程优势学科创新平台、双一流
+                    </div>
+                </div>
+                
+                <div class="b_ans">
+                    <h2>相关搜索</h2>
+                    <div style="margin-top: 10px;">
+                        <a href="#" style="display: block; margin-bottom: 8px; color: #1a0dab; text-decoration: none;">江南大学研究生院</a>
+                        <a href="#" style="display: block; margin-bottom: 8px; color: #1a0dab; text-decoration: none;">江南大学图书馆</a>
+                        <a href="#" style="display: block; margin-bottom: 8px; color: #1a0dab; text-decoration: none;">江南大学教务处</a>
+                        <a href="#" style="display: block; margin-bottom: 8px; color: #1a0dab; text-decoration: none;">江南大学排名</a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="b_footer">
+        <div class="b_footerItems">
+            <div>
+                <a href="#">隐私和 Cookie</a>
+                <a href="#">法律声明</a>
+                <a href="#">广告</a>
+                <a href="#">关于我们的广告</a>
+                <a href="#">帮助</a>
+                <a href="#">反馈</a>
+            </div>
+            <div>
+                © 2026 微软
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 搜索功能
+        document.getElementById('sb_form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.querySelector('.b_searchbox').value.trim();
+            if (query) {
+                alert(`正在搜索: ${query}`);
+                // 实际应用中这里会进行搜索请求
+            }
+        });
+        
+        // 当前年份
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearElement = document.querySelector('.b_footerItems div:last-child');
+            if (yearElement) {
+                yearElement.textContent = `© ${new Date().getFullYear()} 微软`;
+            }
+        });
+    </script>
+</body>
+</html>
